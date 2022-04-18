@@ -1,0 +1,158 @@
+{
+    "team": "Mumbai Indians",
+    "wins": 7,
+    "lost": 5,
+    "tie": 1,
+    "squad": [
+        {
+            "name": "ROHIT SHARMA",
+            "match": 4,
+            "runs": 80,
+            "wickets": 0
+        },
+        {
+            "name": "ANMOLPREET SINGH",
+            "match": 2,
+            "runs": 13,
+            "wickets": null
+        },
+        {
+            "name": "ARJUN TENDULKAR",
+            "match": 0,
+            "runs": 0,
+            "wickets": 0
+        },
+        {
+            "name": "ARSHAD KHAN",
+            "match": 0,
+            "runs": 0,
+            "wickets": 0
+        },
+        {
+            "name": "ARYAN JUYAL",
+            "match": 0,
+            "runs": 0,
+            "wickets": 0
+        },
+        {
+            "name": "BASIL THAMPI",
+            "match": 4,
+            "runs": null,
+            "wickets": 3
+        },
+        {
+            "name": "DANIEL SAMS",
+            "match": 3,
+            "runs": 7,
+            "wickets": 1
+        },
+        {
+            "name": "DEWALD BREVIS",
+            "match": 0,
+            "runs": 0,
+            "wickets": 0
+        },
+        {
+            "name": "FABIAN ALLEN",
+            "match": 0,
+            "runs": 0,
+            "wickets": 0
+        },
+        {
+            "name": "HRITHIK SHOKEEN",
+            "match": 0,
+            "runs": 0,
+            "wickets": 0
+        },
+        {
+            "name": "ISHAN KISHAN",
+            "match": 4,
+            "runs": 175,
+            "wickets": null
+        },
+        {
+            "name": "JASPRIT BUMRAH",
+            "match": 4,
+            "runs": 0,
+            "wickets": 3
+        },
+        {
+            "name": "JAYDEV UNADKAT",
+            "match": 1,
+            "runs": 13,
+            "wickets": 1
+        },
+        {
+            "name": "JOFRA ARCHER",
+            "match": 0,
+            "runs": 0,
+            "wickets": 0
+        },
+        {
+            "name": "KIERON POLLARD",
+            "match": 4,
+            "runs": 47,
+            "wickets": 1
+        },
+        {
+            "name": "MAYANK MARKANDE",
+            "match": 0,
+            "runs": 0,
+            "wickets": 0
+        },
+        {
+            "name": "MURUGAN ASHWIN",
+            "match": 4,
+            "runs": 6,
+            "wickets": 4
+        },
+        {
+            "name": "RAHUL BUDDHI",
+            "match": 0,
+            "runs": 0,
+            "wickets": 0
+        },
+        {
+            "name": "RAMANDEEP SINGH",
+            "match": 1,
+            "runs": 6,
+            "wickets": null
+        },
+        {
+            "name": "RILEY MEREDITH",
+            "match": 0,
+            "runs": 0,
+            "wickets": 0
+        },
+        {
+            "name": "SANJAY YADAV",
+            "match": 0,
+            "runs": 0,
+            "wickets": 0
+        },
+        {
+            "name": "SURYAKUMAR YADAV",
+            "match": 2,
+            "runs": 120,
+            "wickets": 0
+        },
+        {
+            "name": "TILAK VARMA",
+            "match": 4,
+            "runs": 121,
+            "wickets": 0
+        },
+        {
+            "name": "TIM DAVID",
+            "match": 2,
+            "runs": null,
+            "wickets": null
+        },
+        {
+            "name": "TYMAL MILLS",
+            "match": 3,
+            "runs": null,
+            "wickets": 6
+        }
+    ]
+}
