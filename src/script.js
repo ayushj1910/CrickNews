@@ -20,7 +20,7 @@ let selectedDiv = null;
 
 //Load HTML elements
 createNavbar();
-createAlert();
+// createAlert();
 formModal();
 
 //Data loaders ( Starter functions call)
@@ -32,6 +32,270 @@ processTeamData();
 formId(teams[0]);
 
 //------------------Functions related to Nav-tabs----------------------------------------------
+
+//================================================================
+
+//------------------------Function which renders utilities page-----------------------
+
+//Gives listener to utilities to tab in navbar
+const utilities = document.getElementById("utilitiesTab");
+utilities.addEventListener("click", function () {
+  showUtilities();
+});
+
+//AJAX for loading the utilities tab
+function showUtilities() {
+  const xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function () {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("homeContent").style.display = "none";
+      document.getElementById("dashboard").style.display = "none";
+      document.getElementById("utilities").style.display = "block";
+      document.querySelector(".addCardBtn").style.display = "none";
+      container = null;
+    }
+  };
+  xhttp.open("GET", `index.html`, true);
+  xhttp.onload = function () {
+    document.getElementById("utilities").innerHTML = `
+    <h1 class="formHeading">Add JSON for creating Team </h1>
+    <form class="utlForm">
+    <div class="input-group mb-3">
+  <label class="input-group-text" for="file">Upload JSON</label>
+  <input type="file" class="form-control" id="file" name="fileUpload" >
+</div>
+    <button type="submit" id="submitBtn" class="btn btn-primary" onClick="myClick()">Submit</button>
+  </form>`;
+    document.getElementById("file").addEventListener("change", previewFile);
+  };
+  xhttp.send();
+}
+
+//-------------------Global variable for file upload------------------
+
+let uploadedFile;
+let uploadedTeamName;
+let uploadedFileType;
+let uploadedFileFormatError;
+let spinner;
+
+//-------------------------------------------------------------------
+
+//This function creates a preview file on change of input[type=file]
+function previewFile() {
+  uploadedFileFormatError = false;
+  const [file] = document.querySelector("input[type=file]").files;
+  uploadedTeamName = file.name;
+  uploadedFileType = file.type;
+  const reader = new FileReader();
+
+  reader.addEventListener("load", () => {
+    try {
+      const result = JSON.parse(reader.result);
+      uploadedFile = result;
+    } catch (error) {
+      uploadedFileFormatError = true;
+      createAlerts("Uploaded file has Wrong Format!", "danger");
+      setTimeout(function () {
+        hideAlerts();
+      }, 2000);
+      showUtilities();
+    }
+  });
+
+  if (file && file.type === "application/json") {
+    reader.readAsText(file);
+  } else {
+    createAlerts("Uploaded file is not a JSON file", "danger");
+    setTimeout(function () {
+      hideAlerts();
+    }, 2000);
+  }
+}
+
+// This function will run when submit button is clicled
+function myClick() {
+  event.preventDefault();
+  let teamName;
+  try {
+    //get team name from uploaded file
+    teamName = uploadedTeamName.substring(0, uploadedTeamName.indexOf("."));
+
+    // this will run team already exists in the home page
+    if (teams.includes(teamName)) {
+      createAlerts("Teams already exists", "primary");
+      setTimeout(function () {
+        hideAlerts();
+      }, 2000);
+      showUtilities();
+      uploadedFile = false;
+    }
+
+    //This will create a spinner and cancel button before uploadind a file(while loading)
+    if (
+      teamName &&
+      !teams.includes(teamName) &&
+      uploadedFileType === "application/json" &&
+      uploadedFileFormatError === false
+    ) {
+      createSpinner();
+      cancelBtn();
+    }
+
+    //The main upload file function which will append the data for new team in the home page
+    setTimeout(function uploadFile() {
+      //This will aboort this function when someone click cancel while the spinner runs
+      if (spinner === true) {
+        abortUploading();
+        return;
+      }
+
+      if (
+        teamName &&
+        !teams.includes(teamName) &&
+        uploadedFileType === "application/json" &&
+        uploadedFileFormatError === false
+      ) {
+        appendUplodedFileData(uploadedFile, teamName);
+      }
+    }, 2000);
+  } catch (error) {
+    //This alert will be triggereg when somebody submits without selecting a file
+    if (!teamName) {
+      createAlerts("Please select a file to continue!", "dark");
+      setTimeout(function () {
+        hideAlerts();
+      }, 2000);
+    }
+  }
+}
+
+//This will happen when someone cancels the uploading
+function abortUploading() {
+  uploadedTeamName = false;
+  teamName = false;
+  spinner = false;
+}
+function cancelBtn() {
+  const cancelBtn = document.querySelector(".cancelBtn");
+  cancelBtn.addEventListener("click", function () {
+    spinner = true;
+    showUtilities();
+  });
+}
+
+function appendUplodedFileData(uploadedFile, teamName) {
+  //push team name into teams array
+  teams.push(teamName);
+  document.getElementById("myTab").innerHTML = "";
+  //create nav-tab again with new team in it
+  appendNavTabs();
+  appendNavTabContent();
+
+  //this makes sure that data is appened in correct container(i.e correct team nav-tab)
+  container = document.getElementById(`tile-${teams.length - 1}`);
+  teamBtn();
+
+  // Create cards and append data in that
+  AddBtn(uploadedFile, teamName);
+  headerElems(uploadedFile, teamName);
+  createCards(uploadedFile, teamName);
+  addTotal(teamName);
+  uploadedTeamName = false;
+
+  // redirect to home page
+  showHome();
+
+  //create success alert after adding team
+  createAlerts("Team created successfully", "success");
+  setTimeout(function () {
+    hideAlerts();
+  }, 3000);
+}
+
+//This creates alerts at the top of page(needs two paramter - message, type)
+function createAlerts(alertMesssage, alertType) {
+  const alert = document.getElementById("nameAlert");
+  alert.innerHTML = `<div class="alert alert-${alertType}" role="alert">
+  ${alertMesssage}
+</div>`;
+  document.getElementById("nameAlert").classList.remove("alert-display");
+}
+//This hides the alert which is created
+function hideAlerts() {
+  const alert = document.getElementById("nameAlert");
+  alert.classList.add("alert-display");
+}
+
+//This create html element for spinner
+function createSpinner() {
+  document.getElementById("utilities").innerHTML = `
+  <div class="center-spinner">
+  <div class="spinner-border" role="status">
+  <span class="visually-hidden">Loading...</span>
+  </div>
+   
+  </div>
+  <div class="center-spinner">  
+  <button class="btn btn-danger cancelBtn" role="button">Cancel</button>
+  </div>
+  `;
+}
+
+//-------------Functions which renders home page-----------------------------
+//Give listener to home tab
+const homeBtn = document.getElementById("homeTab");
+homeBtn.addEventListener("click", function () {
+  showHome();
+});
+
+//AJAX for home tab
+function showHome() {
+  const xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function () {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("homeContent").style.display = "block";
+      document.getElementById("dashboard").style.display = "none";
+      document.getElementById("utilities").style.display = "none";
+      document.querySelector(".addCardBtn").style.display = "block";
+      container = document.getElementById(
+        `tile-${teams.indexOf(selectedTeam)}`
+      );
+    }
+  };
+  xhttp.open("GET", `index.html`, true);
+  xhttp.send();
+}
+
+//---------Dashboard tab rendering---------------------------
+
+const dashbaordBtn = document.getElementById("dashboardTab");
+dashbaordBtn.addEventListener("click", function () {
+  showDashboard();
+});
+
+function showDashboard() {
+  const xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function () {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("homeContent").style.display = "none";
+      document.getElementById("dashboard").style.display = "block";
+      document.getElementById("utilities").style.display = "none";
+      document.querySelector(".addCardBtn").style.display = "none";
+    }
+  };
+  xhttp.open("GET", `index.html`, true);
+  xhttp.onload = function () {
+    document.getElementById(
+      "dashboard"
+    ).innerHTML = `<div class="center-spinner">
+    <h1> In Implementation.... </h1>
+    </div>`;
+  };
+  xhttp.send();
+}
+
+//================================================================
 
 //This function creates and appends nav tabs in myTab div
 function appendNavTabs() {
@@ -53,7 +317,10 @@ function appendNavTabs() {
   >${team}</button>`;
     navTabs.appendChild(li);
   });
-  document.getElementById("team-0").classList.add("active");
+
+  document
+    .getElementById(`team-${teams.indexOf(selectedTeam)}`)
+    .classList.add("active");
 }
 
 //This function creates structure where all the data will be appened
@@ -70,8 +337,8 @@ function appendNavTabContent() {
 
     tabDiv.appendChild(wrapperDiv).appendChild(tabContent);
   });
-  document.getElementById(teams[0]).classList.add("active");
-  document.getElementById(teams[0]).classList.add("show");
+  document.getElementById(selectedTeam).classList.add("active");
+  document.getElementById(selectedTeam).classList.add("show");
 }
 
 //This sets innerHTML in appendNavTabContent function
@@ -144,7 +411,9 @@ function processTeamData() {
         headerElems(datanew, team);
         createCards(datanew, team);
         addTotal(team);
-        container = document.getElementById("tile-0");
+        container = document.getElementById(
+          `tile-${teams.indexOf(selectedTeam)}`
+        );
       } catch (error) {
         console.log(error);
       }
@@ -258,13 +527,12 @@ function AddBtn(data, team) {
           addTotal(team);
           resetForm(team);
           ranked(team);
-
-          const alert = document.getElementById("alert");
-          alert.classList.add("alert-display");
         } else if (team) {
           //Shows alert on top if player name is missing
-          const alert = document.getElementById("alert");
-          alert.classList.remove("alert-display");
+          createAlerts("player name is required to create card!", "danger");
+          setTimeout(function () {
+            hideAlerts();
+          }, 4000);
         }
       } else {
         //This executes when the user is editing the existing cards
@@ -321,16 +589,21 @@ function onEdit(div, team) {
       selectedDiv[1].children[4].innerText
     );
   }
-  const alert = document.getElementById("alert");
-  alert.classList.add("alert-display");
 }
 
 //Updates the data edited by user for the selected card
 function updateCard(formData) {
-  selectedDiv[0].innerHTML = formData.name;
-  selectedDiv[1].children[0].innerText = formData.runs;
-  selectedDiv[1].children[2].innerText = formData.match;
-  selectedDiv[1].children[4].innerText = formData.wickets;
+  if (formData.name !== "") {
+    selectedDiv[0].innerHTML = formData.name;
+    selectedDiv[1].children[0].innerText = formData.runs;
+    selectedDiv[1].children[2].innerText = formData.match;
+    selectedDiv[1].children[4].innerText = formData.wickets;
+  } else {
+    createAlerts("Name can't be empty", "danger");
+    setTimeout(function () {
+      hideAlerts();
+    }, 2000);
+  }
 
   return formData;
 }
@@ -403,12 +676,14 @@ function createNavbar() {
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <a class="nav-link" aria-current="page" href="#">Home</a>
+            <a class="nav-link" id="homeTab" aria-current="page" href="#">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" id="dashboard" href="#">Dashbaord</a>
+            <a class="nav-link" id="dashboardTab" href="#">Dashbaord</a>
           </li>
-          
+          <li class="nav-item">
+          <a class="nav-link" id="utilitiesTab" href="#">Utilities</a>
+        </li>
         </ul>
         <button
           onclick="setSelectedDiv()"
@@ -422,14 +697,6 @@ function createNavbar() {
       </div>
     </div>
   </nav>`;
-}
-
-//Creates an alert message when the user tries to create a new card without name
-function createAlert() {
-  const alert = document.getElementById("nameAlert");
-  alert.innerHTML = `<div class="alert alert-danger alert-display" id="alert" role="alert">
-  Name Field is requierd to add a card!
-</div>`;
 }
 
 //Creates a modal window which has a form to add new player details

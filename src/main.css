@@ -85,6 +85,9 @@
 
 .alert-display {
   display: none;
+  /* visibility: hidden; */
+  /* opacity: 0;
+  transition: display 0s, opacity 0.5s linear; */
 }
 
 .icon {
@@ -146,4 +149,32 @@
   background-attachment: fixed;
   background-size: cover;
   color: white;
+}
+
+
+.utlForm{
+margin-top: 30px;
+border: 1px solid whitesmoke;
+background-color:  rgba(11, 10, 10, 0.5);
+
+padding: 30px;
+color: white;
+}
+.formHeading{
+  color: white;
+  background-color: rgba(11, 10, 10, 0.8);
+  margin-top: 5px;
+  padding: 15px;
+  text-align: center;
+  border-radius: 5px;
+}
+
+.center-spinner{
+  height: 100%;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  justify-content: center; /* align horizontal */
+  align-items: center; /* align vertical */
+  margin-top: 150px;
 }
